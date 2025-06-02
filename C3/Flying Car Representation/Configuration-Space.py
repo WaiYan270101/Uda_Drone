@@ -108,18 +108,21 @@ def create_grid(data, drone_altitude, safety_distance):
         
             # row(north) and column(east) numbers of the cell containing obstacle centre 
             centre_row = int(np.floor(north - north_min))
+            centre_rowOffset = north-north_min-centre_row
             centre_column = int(np.floor(east - east_min))
+            centre_columnOffset = east-east_min-centre_column
             
             # extent (half length in terms of number of cells) of the obstacle in row(north) and column(east) directions
-            # assuming the centre of obstacle is located exactly at the centre of its cell
-            row_extent = int(np.ceil(d_north + safety_distance - cell_halfWidth))
-            column_extent = int(np.ceil(d_east + safety_distance - cell_halfWidth))
+            row_northExtent = int(np.ceil(d_north + safety_distance - 1 + centre_rowOffset))
+            row_southExtent = int(np.ceil(d_north + safety_distance - centre_rowOffset))
+            column_eastExtent = int(np.ceil(d_east + safety_distance - 1 + centre_columnOffset))
+            column_westExtent = int(np.ceil(d_east + safety_distance - centre_columnOffset))
             
             # place the obstacle on the grid
-            min_row = max(0, centre_row - row_extent)
-            max_row = min(north_size-1, centre_row + row_extent)
-            min_column = max(0, centre_column - column_extent)
-            max_column = min(east_size-1, centre_column + column_extent)
+            min_row = max(0, centre_row - row_southExtent)
+            max_row = min(north_size-1, centre_row + row_northExtent)
+            min_column = max(0, centre_column - column_westExtent)
+            max_column = min(east_size-1, centre_column + column_eastExtent)
             
             for row in range(min_row, max_row+1):
                 for column in range(min_column, max_column+1):
